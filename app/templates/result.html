@@ -1,0 +1,59 @@
+{% if error %}
+<div class="alert">
+    <p class="alert__title">⚠️ {{ error }}</p>
+</div>
+
+{% elif result %}
+{% set is_prod = (result.category == "Produtivo") %}
+
+<div class="stack">
+    <!-- Badge e confiança -->
+    <div class="result-top">
+        <span class="badge {% if is_prod %}badge--prod{% else %}badge--improd{% endif %}">
+            {% if is_prod %}✅{% else %}📌{% endif %} {{ result.category }}
+        </span>
+        <span class="confidence">
+            🎯 Confiança: {{ (result.confidence * 100) | round(0) }}%
+        </span>
+    </div>
+
+    <!-- Razão da classificação -->
+    <div class="panel">
+        <p class="panel__title">🤔 Por que essa classificação?</p>
+        <p class="panel__text">{{ result.short_reason }}</p>
+    </div>
+
+    <!-- Resposta sugerida -->
+    <div class="panel">
+        <div class="reply-header">
+            <p class="panel__title" style="margin:0;">💬 Resposta Sugerida</p>
+            <button class="button-small" type="button" onclick="copyReply()">
+                📋 Copiar
+            </button>
+        </div>
+
+        <textarea id="reply" class="textarea" rows="7" readonly>{{ result.suggested_reply }}</textarea>
+        <p id="copied" class="copied hidden">✅ Copiado para a área de transferência!</p>
+    </div>
+
+    <!-- Preview do email -->
+    <details class="panel preview">
+        <summary>👁️ Ver prévia completa do e-mail</summary>
+        <pre>{{ email_preview }}</pre>
+    </details>
+
+    <!-- Botão para nova análise -->
+    <div style="text-align: center; margin-top: 8px;">
+        <button class="button-small" onclick="document.querySelector('textarea[name=email_text]').focus()">
+            🔄 Analisar outro email
+        </button>
+    </div>
+</div>
+
+{% else %}
+<div class="result-empty">
+    <div class="result-empty__icon">📬</div>
+    <p><b>Nenhum resultado ainda</b></p>
+    <p>Envie um e-mail para análise usando o formulário ao lado.</p>
+</div>
+{% endif %}

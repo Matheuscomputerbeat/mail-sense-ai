@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="{{ url_for('static', path='app.js') }}"></script>
+    <link rel="icon" href="{{ url_for('static', path='favicon.ico') }}">
+    <title>MailSense AI - Classificação Inteligente</title>
+</head>
+
+<body>
+    <button id="theme-toggle" aria-label="Alternar tema" class="themeToggle">
+  ☀️
+</button>
+
+    <div class="container">
+        <!-- Header melhorado -->
+        <header class="header">
+            <div class="header__top">
+                <img src="{{ url_for('static', path='logo.png') }}?v=1" alt="Descrição da Imagem" class="header-image">
+                <h1 class="header__title">MailSense AI</h1>
+            </div>
+
+            <p class="header__subtitle">
+                Classifique e-mails automaticamente em <b>Produtivo</b> ou <b>Improdutivo</b> usando inteligência
+                artificial e receba sugestões de respostas personalizadas.
+            </p>
+        </header>
+
+        <!-- Cards informativos -->
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card__icon info-card__icon--blue">🎯</div>
+                <div class="info-card__content">
+                    <h3>Classificação Inteligente</h3>
+                    <p>IA identifica automaticamente se o email requer ação ou não</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-card__icon info-card__icon--green">⚡</div>
+                <div class="info-card__content">
+                    <h3>Respostas Automáticas</h3>
+                    <p>Sugestões geradas baseadas no contexto do email</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-card__icon info-card__icon--purple">💡</div>
+                <div class="info-card__content">
+                    <h3>Economia de Tempo</h3>
+                    <p>Reduza triagem manual e foque no que importa</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid principal -->
+        <div class="grid">
+            <!-- INPUT -->
+            <section class="card">
+                <h2 class="card__title">📥 Entrada de Email</h2>
+
+                <!-- Exemplos -->
+                <div class="examples">
+                    <label class="label">Exemplos para testar:</label>
+                    <div class="examples__grid">
+                        <div class="example-item"
+                            onclick="useExample('Olá, gostaria de solicitar suporte técnico urgente para o sistema de pagamentos. Há uma falha crítica que está impedindo o processamento de transações desde às 9h de hoje. Preciso de um retorno o mais rápido possível.')">
+                            <div class="example-item__header">
+                                <span class="example-item__title">Solicitação de Suporte</span>
+                                <span class="example-tag example-tag--prod">Produtivo</span>
+                            </div>
+                            <p class="example-item__text">Solicitação urgente de suporte técnico para sistema de
+                                pagamentos...</p>
+                        </div>
+
+                        <div class="example-item"
+                            onclick="useExample('Bom dia, entrei em contato na semana passada sobre a solicitação #12345. Gostaria de saber o status atual dessa requisição e qual a previsão de conclusão. Aguardo retorno.')">
+                            <div class="example-item__header">
+                                <span class="example-item__title">Pedido de Status</span>
+                                <span class="example-tag example-tag--prod">Produtivo</span>
+                            </div>
+                            <p class="example-item__text">Solicitação de atualização sobre caso em aberto...</p>
+                        </div>
+
+                        <div class="example-item"
+                            onclick="useExample('Olá pessoal! Queria desejar um feliz natal a todos! Que 2024 seja repleto de conquistas e realizações para toda a equipe. Abraços!')">
+                            <div class="example-item__header">
+                                <span class="example-item__title">Felicitações</span>
+                                <span class="example-tag example-tag--improd">Improdutivo</span>
+                            </div>
+                            <p class="example-item__text">Mensagem de felicitações para a equipe...</p>
+                        </div>
+
+                        <div class="example-item"
+                            onclick="useExample('Muito obrigado pelo atendimento de ontem! Foi excelente e resolveu meu problema rapidamente. Parabéns pelo trabalho!')">
+                            <div class="example-item__header">
+                                <span class="example-item__title">Agradecimento</span>
+                                <span class="example-tag example-tag--improd">Improdutivo</span>
+                            </div>
+                            <p class="example-item__text">Agradecimento simples pelo atendimento...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulário -->
+                <form class="form" hx-post="/analyze" hx-target="#result" hx-swap="innerHTML" hx-indicator="#loading"
+                    enctype="multipart/form-data">
+                    <div>
+                        <label class="label">📎 Upload de Arquivo (.txt ou .pdf)</label>
+                        <input class="input-file" type="file" name="email_file" accept=".txt,.pdf" />
+                    </div>
+
+                    <div>
+                        <label class="label">✍️ Ou cole o texto do e-mail</label>
+                        <textarea class="textarea" name="email_text" rows="8"
+                            placeholder="Cole aqui o conteúdo completo do e-mail para análise..."></textarea>
+                    </div>
+
+                    <button class="button" type="submit">✨ Analisar com IA</button>
+                </form>
+
+                <p class="help">
+                    💡 <b>Dica:</b> Você pode fazer upload de um arquivo ou colar o texto diretamente. Para testar
+                    rapidamente, clique em um dos exemplos acima!
+                </p>
+            </section>
+
+            <!-- OUTPUT -->
+            <section class="card">
+                <h2 class="card__title">📊 Resultado da Análise</h2>
+
+                <!-- Loading indicator -->
+                <div id="loading" class="loading htmx-indicator">
+                    <div class="loading__spinner"></div>
+                    <p>Analisando email com IA...</p>
+                </div>
+
+                <div id="result" class="result-empty">
+                    <div class="result-empty__icon">📬</div>
+                    <p><b class="analise">Aguardando análise...</b></p>
+                    <p>Envie um e-mail para ver a classificação e a resposta sugerida pela inteligência artificial.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Desenvolvida para o desafio técnico <b>AutoU</b> 🚀</p>
+        </footer>
+    </div>
+</body>
+
+</html>

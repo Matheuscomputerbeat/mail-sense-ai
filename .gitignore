@@ -1,0 +1,18 @@
+# ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# venv
+.venv/
+venv/
+
+# caches python
+__pycache__/
+*.pyc
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
